@@ -315,4 +315,63 @@ describe('postController', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'Error deleting post' });
     });
   });
+
+  describe('searchPosts', () => {
+    it('Should fetch posts and return them as JSON', async () => {
+      const req = {
+        query: { q: 'any_query' },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const searchResults = [mockPosts[0]];
+
+      (postService.searchPosts as jest.Mock).mockResolvedValue(searchResults);
+
+      await postController.searchPosts(req, res);
+
+      expect(postService.searchPosts).toHaveBeenCalledWith('any_query');
+      expect(res.json).toHaveBeenCalledWith(searchResults);
+    });
+
+    it('Should return 400 if the search parameter is missing', async () => {
+      const req = {
+        query: {},
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await postController.searchPosts(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Search query is required',
+      });
+      expect(postService.searchPosts).not.toHaveBeenCalled();
+    });
+
+    it('Should return 500 if there is an error fetching the posts', async () => {
+      const req = {
+        query: { q: 'any_query' },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const error = new Error('Internal server error');
+      (postService.searchPosts as jest.Mock).mockRejectedValue(error);
+
+      await postController.searchPosts(req, res);
+
+      expect(postService.searchPosts).toHaveBeenCalledWith('any_query');
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Error searching posts',
+      });
+    });
+  });
 });
