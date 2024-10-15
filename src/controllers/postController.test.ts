@@ -102,4 +102,88 @@ describe('postController', () => {
       });
     });
   });
+
+  describe('createPost', () => {
+    it('Should create a new post and return it with status 201', async () => {
+      const req = {
+        body: {
+          title: 'any_title',
+          content: 'any_content',
+          author: 'any_author',
+        },
+      } as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const newPost = {
+        id: 'any_id',
+        slug: 'any_slug',
+        title: 'any_title',
+        content: 'any_content',
+        author: 'any_author',
+        publishedAt: null,
+        createdAt: 'any_date',
+        updatedAt: 'any_date',
+      };
+
+      (postService.createPost as jest.Mock).mockResolvedValue(newPost);
+
+      await postController.createPost(req, res);
+
+      expect(postService.createPost).toHaveBeenCalledWith({
+        title: 'any_title',
+        content: 'any_content',
+        author: 'any_author',
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith(newPost);
+    });
+
+    it('Should return 400 if title or author are missing', async () => {
+      const req = {
+        body: { content: 'any_content' },
+      } as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      await postController.createPost(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Title and author are required',
+      });
+      expect(postService.createPost).not.toHaveBeenCalled();
+    });
+
+    it('Should return 500 if there was an error creating the post', async () => {
+      const req = {
+        body: {
+          title: 'any_title',
+          content: 'any_content',
+          author: 'any_author',
+        },
+      } as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const error = new Error('Internal server error');
+      (postService.createPost as jest.Mock).mockRejectedValue(error);
+
+      await postController.createPost(req, res);
+
+      expect(postService.createPost).toHaveBeenCalledWith({
+        title: 'any_title',
+        content: 'any_content',
+        author: 'any_author',
+      });
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Error creating post' });
+    });
+  });
 });
