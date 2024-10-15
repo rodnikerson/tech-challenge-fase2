@@ -47,7 +47,7 @@ describe('postController', () => {
   describe('getPost', () => {
     it('Should fetch a post by id and return it as JSON', async () => {
       const req = {
-        params: { id: 'PJw207NixHaNZI8F' },
+        params: { id: 'any_id' },
       } as unknown as Request;
       const res = {
         json: jest.fn(),
@@ -58,7 +58,7 @@ describe('postController', () => {
 
       await postController.getPost(req, res);
 
-      expect(postService.getPostById).toHaveBeenCalledWith('PJw207NixHaNZI8F');
+      expect(postService.getPostById).toHaveBeenCalledWith('any_id');
       expect(res.json).toHaveBeenCalledWith(mockPost);
     });
 
@@ -83,7 +83,7 @@ describe('postController', () => {
 
     it('Should return 500 for other errors', async () => {
       const req = {
-        params: { id: 'PJw207NixHaNZI8F' },
+        params: { id: 'any_id' },
       } as unknown as Request;
       const res = {
         status: jest.fn().mockReturnThis(),
@@ -95,7 +95,7 @@ describe('postController', () => {
 
       await postController.getPost(req, res);
 
-      expect(postService.getPostById).toHaveBeenCalledWith('PJw207NixHaNZI8F');
+      expect(postService.getPostById).toHaveBeenCalledWith('any_id');
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Internal server error',
@@ -184,6 +184,77 @@ describe('postController', () => {
       });
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ message: 'Error creating post' });
+    });
+  });
+
+  describe('updatePost', () => {
+    it('Should update a post and return the updated post', async () => {
+      const req = {
+        params: { id: 'any_id' },
+        body: { title: 'any_new_title' },
+      } as unknown as Request;
+      const res = {
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const updatedPost = {
+        ...mockPosts[1],
+        title: 'any_new_title',
+        updatedAt: 'any_date',
+      };
+
+      (postService.updatePost as jest.Mock).mockResolvedValue(updatedPost);
+
+      await postController.updatePost(req, res);
+
+      expect(postService.updatePost).toHaveBeenCalledWith('any_id', {
+        title: 'any_new_title',
+      });
+      expect(res.json).toHaveBeenCalledWith(updatedPost);
+    });
+
+    it('Should return 404 if post is not found', async () => {
+      const req = {
+        params: { id: 'any_id' },
+        body: { title: 'any_title' },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const error = new Error('Post not found');
+      (postService.updatePost as jest.Mock).mockRejectedValue(error);
+
+      await postController.updatePost(req, res);
+
+      expect(postService.updatePost).toHaveBeenCalledWith('any_id', {
+        title: 'any_title',
+      });
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Post not found' });
+    });
+
+    it('Should return 500 if there was an error updating the post', async () => {
+      const req = {
+        params: { id: 'any_id' },
+        body: { title: 'any_title' },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const error = new Error('Internal server error');
+      (postService.updatePost as jest.Mock).mockRejectedValue(error);
+
+      await postController.updatePost(req, res);
+
+      expect(postService.updatePost).toHaveBeenCalledWith('any_id', {
+        title: 'any_title',
+      });
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Error updating post' });
     });
   });
 });
