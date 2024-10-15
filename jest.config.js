@@ -5,6 +5,7 @@ module.exports = {
   displayName: 'root-tests',
   testMatch: ['<rootDir>/src/**/*.test.ts'],
   testEnvironment: 'node',
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
   clearMocks: true,
   preset: 'ts-jest',
   moduleNameMapper: {
