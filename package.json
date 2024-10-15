@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf dist && swc ./src -d dist",
-    "start": "node dist/src/index.js"
+    "start": "node dist/src/index.js",
+    "start:docker": "npm run build && npm start",
+    "watch": "watchy --no-init-spawn --debounce 1 -w src -- docker compose restart backend"
   },
   "keywords": [],
   "author": "",
@@ -14,8 +16,18 @@
     "@swc/cli": "^0.4.1-nightly.20240914",
     "@swc/core": "^1.7.35",
     "@tsconfig/node18": "^18.2.4",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.7.5",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "eslint": "^8.37.0",
     "rimraf": "^6.0.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "watchy": "^0.10.2"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "morgan": "^1.10.0"
   }
 }
