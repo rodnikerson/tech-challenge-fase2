@@ -257,4 +257,62 @@ describe('postController', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'Error updating post' });
     });
   });
+
+  describe('deletePost', () => {
+    it('Should delete a post and return status 204', async () => {
+      const req = {
+        params: { id: 'any_id' },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        send: jest.fn(),
+      } as unknown as Response;
+
+      (postService.deletePost as jest.Mock).mockResolvedValue(undefined);
+
+      await postController.deletePost(req, res);
+
+      expect(postService.deletePost).toHaveBeenCalledWith('any_id');
+      expect(res.status).toHaveBeenCalledWith(204);
+      expect(res.send).toHaveBeenCalled();
+    });
+
+    it('Should return 404 if post is not found', async () => {
+      const req = {
+        params: { id: 'any_id' },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const error = new Error('Post not found');
+      (postService.deletePost as jest.Mock).mockRejectedValue(error);
+
+      await postController.deletePost(req, res);
+
+      expect(postService.deletePost).toHaveBeenCalledWith('any_id');
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Post not found' });
+    });
+
+    it('Should return 500 if there was an error deleting the post', async () => {
+      const req = {
+        params: { id: 'any_id' },
+      } as unknown as Request;
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const error = new Error('Internal server error');
+      (postService.deletePost as jest.Mock).mockRejectedValue(error);
+
+      await postController.deletePost(req, res);
+
+      expect(postService.deletePost).toHaveBeenCalledWith('any_id');
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Error deleting post' });
+    });
+  });
 });
