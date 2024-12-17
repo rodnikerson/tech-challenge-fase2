@@ -1,7 +1,11 @@
 import db, { genId } from '../../src/modules/db';
+import bcrypt from 'bcryptjs';
 
 const run = async () => {
   await db.post.deleteMany();
+  await db.user.deleteMany();
+
+  const hashedPassword = await bcrypt.hash('admin', 10);
 
   await db.user.createMany({
     data: [
@@ -9,31 +13,31 @@ const run = async () => {
       {
         name: 'Sadi Carnot',
         email: 'sadi.carnot@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'ADMIN',
       },
       {
         name: 'Fiódor Dostoiévski',
         email: 'fiodor.d@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'ADMIN',
       },
       {
         name: 'Friedrich Nietzsche',
         email: 'nietzsche@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'ADMIN',
       },
       {
         name: 'Virginia Woolf',
         email: 'virginia.woolf@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'ADMIN',
       },
       {
         name: 'Homer',
         email: 'homer@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'ADMIN',
       },
 
@@ -41,31 +45,31 @@ const run = async () => {
       {
         name: 'Dante Alighieri',
         email: 'dante@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'MEMBER',
       },
       {
         name: 'Jean-Paul Sartre',
         email: 'sartre@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'MEMBER',
       },
       {
         name: 'Simone de Beauvoir',
         email: 'simone@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'MEMBER',
       },
       {
         name: 'Fernando Pessoa',
         email: 'pessoa@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'MEMBER',
       },
       {
         name: 'Sylvia Plath',
         email: 'plath@example.com',
-        password: '123',
+        password: hashedPassword,
         role: 'MEMBER',
       },
     ],
