@@ -37,8 +37,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       token,
     });
   } catch (error: any) {
-    console.log(process.env.JWT_SECRET)
-    console.log(process.env.JWT_SECRET as string)
     console.error('Error during login:', error);
 
     if (error.message === 'Invalid credentials') {

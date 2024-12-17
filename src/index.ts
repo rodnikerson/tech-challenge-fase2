@@ -1,11 +1,13 @@
 import express from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 import postRoutes from './routes/postRoutes';
 import authRoutes from './routes/authRoutes';
 
 const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(cors());
 
 app.use(authRoutes);
 app.use(postRoutes);
