@@ -17,20 +17,26 @@ export const createUser = async (data: {
 
 export const loginUser = async (email: string, password: string) => {
   const user = await userModel.getUserByEmail(email);
+
   if (!user) {
     throw new Error('Invalid credentials');
   }
 
-  const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) {
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  if (!passwordMatch) {
     throw new Error('Invalid credentials');
   }
 
   const token = jwt.sign(
-    { id: user.id, email: user.email },
+    { userId: user.id, role: user.role },
     process.env.JWT_SECRET as string,
-    { expiresIn: '6h' }
+    { expiresIn: '1d' }
   );
 
-  return token;
+  const { password: _, ...userWithoutPassword } = user;
+
+  return {
+    token,
+    user: userWithoutPassword,
+  };
 };

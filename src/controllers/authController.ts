@@ -31,10 +31,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 
   try {
-    const token = await authService.loginUser(email, password);
+    const { token, user } = await authService.loginUser(email, password);
+
     res.json({
       message: 'Login successful',
       token,
+      user,
     });
   } catch (error: any) {
     console.error('Error during login:', error);
