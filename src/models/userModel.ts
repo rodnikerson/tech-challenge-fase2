@@ -24,3 +24,12 @@ export const getUserByEmail = async (email: string) => {
     },
   });
 };
+
+export const getAllUsers = async () => {
+  return prisma.user.findMany({
+    select: {
+      email: true,
+      role: true,
+    },
+  });
+};

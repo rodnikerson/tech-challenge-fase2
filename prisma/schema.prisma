@@ -29,7 +29,7 @@ model Post {
   publishedAt DateTime? @db.Timestamptz(6)
   createdAt   DateTime  @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
-  userId      String?   @db.Uuid
+  userId      String?   
   user        User?     @relation(fields: [userId], references: [id], onUpdate: NoAction, map: "posts_userid_foreign")
 
   @@index([publishedAt], map: "idx_posts_publishedAt")

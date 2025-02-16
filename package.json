@@ -10,6 +10,7 @@
     "docker:db:migrate": "docker compose run backend npm run db:migrate",
     "docker:db:migrate:undo": "docker compose run backend npx knex migrate:down",
     "docker:seed:dev": "docker compose run backend npx ts-node scripts/seed/dev.ts",
+    "seed:dev": "npx ts-node scripts/seed/dev.ts",
     "rebuild:be": "docker compose build backend && docker compose rm --force --stop backend && docker compose up -d backend",
     "start": "node dist/src/index.js",
     "start:docker": "npm run build && npm start",
